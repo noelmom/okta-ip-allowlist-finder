@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Find Okta IP allowlist ranges for a tenant using a local Okta IP ranges JSON file." />
+  <title>Okta IP Allowlist Finder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell nav">
+      <div>
+        <p class="eyebrow">Okta Tenant</p>
+        <h1>IP Allowlist Finder</h1>
+      </div>
+      <a class="nav-link" href="https://noelmom.github.io" target="_blank" rel="noopener">noelmom.github.io</a>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <h2>Find the Okta IP ranges your firewall needs.</h2>
+        <p>
+          Enter an Okta tenant URL. The tool checks tenant organization metadata,
+          detects the Okta cell, maps it to the correct range key, then reads the local Okta IP range JSON file.
+        </p>
+      </div>
+      <div class="status-card">
+        <span class="status-dot"></span>
+        <strong>Local JSON lookup</strong>
+        <p>Data is read from <code>data/ip_ranges.json</code>. The file is intended to be refreshed daily.</p>
+        <p id="jsonStatus" class="json-status">Checking local JSON...</p>
+      </div>
+    </section>
+
+    <section class="panel notice">
+      <strong>Important support note</strong>
+      <p><code>*.okta.gov</code> and <code>*.okta.mil</code> tenants are not supported by this tool.</p>
+    </section>
+
+    <section class="panel">
+      <label for="tenantUrl">Okta tenant URL</label>
+      <div class="input-row">
+        <input id="tenantUrl" type="url" placeholder="https://example.okta.com" />
+        <button id="lookupBtn">Find IPs</button>
+      </div>
+      <p class="hint">Example: https://tenant.okta.com</p>
+    </section>
+
+    <section class="panel fallback">
+      <details>
+        <summary>Manual fallback</summary>
+        <div class="manual-grid">
+          <div>
+            <label for="manualCell">Cell or IP range key</label>
+            <input id="manualCell" placeholder="OK14, us_cell_14, EU1, OP3, preview_cell_3" />
+          </div>
+          <button id="manualBtn">Lookup manual cell</button>
+        </div>
+        <p class="hint">
+          Manual search.
+          Supported examples: <code>OK14</code>, <code>us_cell_14</code>, <code>EU1</code>, <code>emea_cell_1</code>, <code>OP3</code>, <code>preview_cell_3</code>.
+        </p>
+      </details>
+    </section>
+
+    <section id="message" class="message hidden"></section>
+
+    <section id="results" class="results hidden">
+      <div class="result-header">
+        <div>
+          <p class="eyebrow">Detected result</p>
+          <h3 id="resultTitle">Allowlist</h3>
+          <p id="resultMeta"></p>
+        </div>
+        <div class="button-row">
+          <button id="copyBtn">Copy IPs</button>
+          <button id="downloadBtn">Download .txt</button>
+        </div>
+      </div>
+      <div class="range-box">
+        <pre id="ipOutput"></pre>
+      </div>
+    </section>
+
+    <section class="panel">
+      <details>
+        <summary>Known cell mapping</summary>
+        <div id="mappingTable" class="mapping-table"></div>
+      </details>
+    </section>
+
+    <section class="notes">
+      <h3>Notes</h3>
+      <ul>
+        <li>This tool does not store tenant URLs or lookup history.</li>
+        <li>The IP range data is served locally from <code>data/ip_ranges.json</code> to avoid CORS issues with the public S3 JSON URL.</li>
+        <li>The last update time is taken from the S3 <code>Last-Modified</code> response header and stored locally in <code>data/last_modified.txt</code>.</li>
+        <li>The local JSON file should be refreshed daily from Okta's published IP range JSON.</li>
+        <li>This is an independent project and is not affiliated with, endorsed by, or sponsored by Okta.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <span>Made by Melo</span>
+      <a href="https://github.com/noelmom" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

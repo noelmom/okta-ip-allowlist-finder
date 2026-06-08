@@ -1,0 +1,31 @@
+name: Update Okta IP ranges
+
+on:
+  schedule:
+    - cron: "20 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download latest Okta IP ranges and Last-Modified header
+        run: |
+          mkdir -p data
+          curl -L "https://s3.amazonaws.com/okta-ip-ranges/ip_ranges.json" -o "data/ip_ranges.json"
+          curl -Is "https://s3.amazonaws.com/okta-ip-ranges/ip_ranges.json" | grep -i "Last-Modified" | tr -d '\r' > "data/last_modified.txt"
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add data/ip_ranges.json data/last_modified.txt
+          git diff --cached --quiet || git commit -m "Update Okta IP ranges JSON"
+          git push
