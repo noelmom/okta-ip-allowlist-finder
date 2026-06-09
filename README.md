@@ -35,6 +35,7 @@ OP3  -> preview_cell_3
 Source:
 
 https://support.okta.com/help/s/article/list-of-ip-addresses-that-should-be-allowlisted-for-inbound-traffic
+
 https://help.okta.com/en-us/content/topics/security/ip-address-allow-listing.htm
 
 ## Download/update the local JSON
